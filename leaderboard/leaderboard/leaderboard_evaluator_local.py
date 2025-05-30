@@ -108,6 +108,7 @@ class LeaderboardEvaluator(object):
         # Create the agent timer
         self._agent_watchdog = Watchdog(int(float(args.timeout)))
         signal.signal(signal.SIGINT, self._signal_handler)
+        print("Done with constructor")
 
     def _signal_handler(self, signum, frame):
         """
