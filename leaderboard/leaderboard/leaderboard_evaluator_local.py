@@ -68,6 +68,7 @@ class LeaderboardEvaluator(object):
         Setup CARLA client and world
         Setup ScenarioManager
         """
+        print("In leaderboard evaluator")
         self.statistics_manager = statistics_manager
         self.sensors = None
         self.sensor_icons = []
@@ -76,7 +77,9 @@ class LeaderboardEvaluator(object):
         # First of all, we need to create the client that will send the requests
         # to the simulator. Here we'll assume the simulator is accepting
         # requests in the localhost at port 2000.
+
         self.client = carla.Client(args.host, int(args.port))
+        print("Created carla client")
         if args.timeout:
             self.client_timeout = float(args.timeout)
         self.client.set_timeout(self.client_timeout)
