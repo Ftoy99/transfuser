@@ -85,8 +85,9 @@ class LeaderboardEvaluator(object):
         self.client.set_timeout(self.client_timeout)
 
         self.world = self.client.load_world('Town01')
+        print("Loaded town1")
         self.traffic_manager = self.client.get_trafficmanager(int(args.trafficManagerPort))
-
+        print("Crated traffic_manager")
         dist = pkg_resources.get_distribution("carla")
         if dist.version != 'leaderboard':
             if LooseVersion(dist.version) < LooseVersion('0.9.10'):
@@ -96,10 +97,10 @@ class LeaderboardEvaluator(object):
         module_name = os.path.basename(args.agent).split('.')[0]
         sys.path.insert(0, os.path.dirname(args.agent))
         self.module_agent = importlib.import_module(module_name)
-
+        print("Loaded agent")
         # Create the ScenarioManager
         self.manager = ScenarioManager(args.timeout, args.debug > 1)
-
+        print("Created ScenarioManager")
         # Time control for summary purposes
         self._start_time = GameTime.get_time()
         self._end_time = None
