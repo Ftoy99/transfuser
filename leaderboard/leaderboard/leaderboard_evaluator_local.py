@@ -394,6 +394,7 @@ class LeaderboardEvaluator(object):
         """
         Run the challenge mode
         """
+        print("Running evaluation challenge mode")
         route_indexer = RouteIndexer(args.routes, args.scenarios, args.repetitions)
 
         if args.resume:
@@ -459,7 +460,7 @@ def main():
                         help="Path to checkpoint used for saving statistics and resuming")
 
     arguments = parser.parse_args()
-
+    print("Done with arguments")
     statistics_manager = StatisticsManager()
 
     try:
