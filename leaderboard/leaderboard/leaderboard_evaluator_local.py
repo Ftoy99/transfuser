@@ -469,6 +469,7 @@ def main():
         leaderboard_evaluator.run(arguments)
 
     except Exception as e:
+        print(e)
         traceback.print_exc()
     finally:
         del leaderboard_evaluator
