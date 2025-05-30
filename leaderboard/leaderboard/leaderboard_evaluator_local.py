@@ -462,9 +462,10 @@ def main():
     arguments = parser.parse_args()
     print("Done with arguments")
     statistics_manager = StatisticsManager()
-
+    print("Created statistics manager")
     try:
         leaderboard_evaluator = LeaderboardEvaluator(arguments, statistics_manager)
+        print("Created LeaderboardEvaluator")
         leaderboard_evaluator.run(arguments)
 
     except Exception as e:
