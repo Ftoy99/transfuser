@@ -96,7 +96,7 @@ class LeaderboardEvaluator(object):
         # Load agent
         module_name = os.path.basename(args.agent).split('.')[0]
         sys.path.insert(0, os.path.dirname(args.agent))
-        print("Importing agent")
+        print(f"Importing agent [{module_name}]")
         self.module_agent = importlib.import_module(module_name)
         print("Loaded agent")
         # Create the ScenarioManager
