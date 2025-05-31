@@ -13,13 +13,12 @@ from point_pillar import PointPillarNet
 
 from PIL import Image, ImageFont, ImageDraw
 from torchvision import models
-
+import torch.nn.init as init
 # Copyright (c) OpenMMLab. All rights reserved.
 import torch
 import torch.nn as nn
-from mmcv.cnn import bias_init_with_prob, normal_init
-from mmcv.ops import batched_nms
-from mmcv.runner import force_fp32
+from torchvision.ops import batched_nms
+
 
 from mmdet.core import multi_apply
 from mmdet.models import HEADS, build_loss
@@ -100,12 +99,17 @@ class LidarCenterNetHead(BaseDenseHead, BBoxTestMixin):
 
     def init_weights(self):
         """Initialize weights of the head."""
-        bias_init = bias_init_with_prob(self.train_cfg.center_net_bias_init_with_prob)
+        p = self.train_cfg.center_net_bias_init_with_prob
+        bias_init = -math.log((1 - p) / p)
+
         self.heatmap_head[-1].bias.data.fill_(bias_init)
         for head in [self.wh_head, self.offset_head]:
             for m in head.modules():
+
                 if isinstance(m, nn.Conv2d):
-                    normal_init(m, std=self.train_cfg.center_net_normal_init_std)
+                    init.normal_(m.weight, std=self.train_cfg.center_net_normal_init_std)
+                    if m.bias is not None:
+                        init.constant_(m.bias, 0)
 
     def forward(self, feats):
         """Forward features. Notice CenterNet head does not use FPN.
@@ -146,7 +150,6 @@ class LidarCenterNetHead(BaseDenseHead, BBoxTestMixin):
 
         return center_heatmap_pred, wh_pred, offset_pred, yaw_class_pred, yaw_res_pred, velocity_pred, brake_pred
 
-    @force_fp32(apply_to=('center_heatmap_preds', 'wh_preds', 'offset_preds', 'yaw_class_preds', 'yaw_res_preds', 'velocity_pred', 'brake_pred'))
     def loss(self,
              center_heatmap_preds,
              wh_preds,
@@ -183,13 +186,13 @@ class LidarCenterNetHead(BaseDenseHead, BBoxTestMixin):
                 - loss_offset (Tensor): loss of offset heatmap.
         """
         assert len(center_heatmap_preds) == len(wh_preds) == len(offset_preds) == 1
-        center_heatmap_pred = center_heatmap_preds[0]
-        wh_pred = wh_preds[0]
-        offset_pred = offset_preds[0]
-        yaw_class_pred = yaw_class_preds[0]
-        yaw_res_pred = yaw_res_preds[0]
-        velocity_pred = velocity_preds[0]
-        brake_pred = brake_preds[0]
+        center_heatmap_pred = center_heatmap_preds[0].float()
+        wh_pred = wh_preds[0].float()
+        offset_pred = offset_preds[0].float()
+        yaw_class_pred = yaw_class_preds[0].float()
+        yaw_res_pred = yaw_res_preds[0].float()
+        velocity_pred = velocity_preds[0].float()
+        brake_pred = brake_preds[0].float()
 
         target_result, avg_factor = self.get_targets(gt_bboxes, gt_labels, gt_bboxes_ignore,
                                                      center_heatmap_pred.shape)
