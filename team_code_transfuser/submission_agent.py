@@ -281,7 +281,7 @@ class HybridAgent(autonomous_agent.AutonomousAgent):
         # prepare image input
         image = self.prepare_image(tick_data)
         img_path = os.path.join(log_dir, f"image_tick_data_proccesed.png")
-        save_image(image[0],img_path)
+        save_image(img_path)
 
         num_points = None
         if(self.backbone == 'latentTF'): # Image only method
@@ -321,6 +321,7 @@ class HybridAgent(autonomous_agent.AutonomousAgent):
             for i in range(self.model_count):
                 rotated_bb = []
                 if (self.backbone == 'transFuser'):
+                    print(f"debug backbone {transfuser}")
                     pred_wp, _ = self.nets[i].forward_ego(image, lidar_bev, target_point, target_point_image, velocity,
                                                           num_points=num_points, save_path=SAVE_PATH, stuck_detector=self.stuck_detector,
                                                           forced_move=is_stuck, debug=self.config.debug, rgb_back=self.rgb_back)
