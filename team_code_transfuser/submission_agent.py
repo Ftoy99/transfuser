@@ -279,7 +279,7 @@ class HybridAgent(autonomous_agent.AutonomousAgent):
                 img = Image.fromarray(img_array.astype(np.uint8))
                 img.save(img_path)
             else:
-                file_path = os.path.join(log_dir, f"{key}_tick_data.")
+                file_path = os.path.join(log_dir, f"{key}_tick_data.txt")
                 with open(file_path, "w") as f:
                     if isinstance(val, tuple):
                         for i, item in enumerate(val):
