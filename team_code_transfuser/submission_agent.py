@@ -273,11 +273,11 @@ class HybridAgent(autonomous_agent.AutonomousAgent):
         # Need to run this every step for GPS denoising
         tick_data = self.tick(input_data)
         for key, val in tick_data.items():
-            if key in {"rgb_front", "rgb_left", "rgb_right"}:
-                img_path = os.path.join(log_dir, f"{key}_tick_data.png")
-                _,img_array = val
-                img = Image.fromarray(img_array.astype(np.uint8))
-                img.save(img_path)
+            if key == "rgb":
+                for i, img_array in enumerate(rgb):
+                    img_path = os.path.join(log_dir, f"rgb_tick_data_{i}.png")
+                    img = Image.fromarray(img_array.astype(np.uint8))
+                    img.save(img_path)
             else:
                 file_path = os.path.join(log_dir, f"{key}_tick_data.txt")
                 with open(file_path, "w") as f:
