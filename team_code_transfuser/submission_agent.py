@@ -236,7 +236,11 @@ class HybridAgent(autonomous_agent.AutonomousAgent):
     @torch.inference_mode() # Faster version of torch_no_grad
     def run_step(self, input_data, timestamp):
         os.makedirs("debug_logs", exist_ok=True)
-        print(input_data)
+        for k, v in input_data.items():
+            if isinstance(v, torch.Tensor):
+                print(f"{k}: tensor shape {v.shape}")
+            else:
+                print(f"{k}: {type(v)}")
         print(timestamp)
         self.step += 1
 
