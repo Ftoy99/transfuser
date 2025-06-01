@@ -272,9 +272,9 @@ class HybridAgent(autonomous_agent.AutonomousAgent):
 
         # Need to run this every step for GPS denoising
         tick_data = self.tick(input_data)
-        for key, val in input_data.items():
+        for key, val in tick_data.items():
             if key in {"rgb_front", "rgb_left", "rgb_right"}:
-                img_path = os.path.join(log_dir, f"{key}.png")
+                img_path = os.path.join(log_dir, f"{key}_tick_data.png")
                 _,img_array = val
                 img = Image.fromarray(img_array.astype(np.uint8))
                 img.save(img_path)
@@ -297,6 +297,9 @@ class HybridAgent(autonomous_agent.AutonomousAgent):
 
         # prepare image input
         image = self.prepare_image(tick_data)
+        img_path = os.path.join(log_dir, f"image_tick_data_proccesed.png")
+        img = Image.fromarray(image.astype(np.uint8))
+        img.save(img_path)
 
         num_points = None
         if(self.backbone == 'latentTF'): # Image only method
