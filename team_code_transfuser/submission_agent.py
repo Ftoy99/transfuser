@@ -273,17 +273,22 @@ class HybridAgent(autonomous_agent.AutonomousAgent):
         # Need to run this every step for GPS denoising
         tick_data = self.tick(input_data)
         for key, val in input_data.items():
-            print(key)
-            file_path = os.path.join(log_dir, f"{key}_tick_data.txt")
-            with open(file_path, "w") as f:
-                if isinstance(val, tuple):
-                    for i, item in enumerate(val):
-                        if isinstance(item, torch.Tensor):
-                            f.write(f"{i}: tensor shape {item.shape}\n")
-                        else:
-                            f.write(f"{i}: {type(item)}: {item}\n")
-                else:
-                    f.write(str(val))
+            if key in {"rgb_front", "rgb_left", "rgb_right"}:
+                img_path = os.path.join(log_dir, f"{key}.png")
+                _,img_array = val
+                img = Image.fromarray(img_array.astype(np.uint8))
+                img.save(img_path)
+            else:
+                file_path = os.path.join(log_dir, f"{key}_tick_data.")
+                with open(file_path, "w") as f:
+                    if isinstance(val, tuple):
+                        for i, item in enumerate(val):
+                            if isinstance(item, torch.Tensor):
+                                f.write(f"{i}: tensor shape {item.shape}\n")
+                            else:
+                                f.write(f"{i}: {type(item)}: {item}\n")
+                    else:
+                        f.write(str(val))
 
         # repeat actions twice to ensure LiDAR data availability
         if self.step % self.config.action_repeat == 1:
