@@ -280,9 +280,8 @@ class HybridAgent(autonomous_agent.AutonomousAgent):
 
         # prepare image input
         image = self.prepare_image(tick_data)
-        print(f"Image shape {image.shape}")
         img_path = os.path.join(log_dir, f"image_tick_data_proccesed.png")
-        save_image(image,img_path)
+        save_image(image[0],img_path)
 
         num_points = None
         if(self.backbone == 'latentTF'): # Image only method
