@@ -246,8 +246,9 @@ class HybridAgent(autonomous_agent.AutonomousAgent):
         for key, val in input_data.items():
             if key in {"rgb_front", "rgb_left", "rgb_right"}:
                 img_path = os.path.join(log_dir, f"{key}.png")
-                _,img_tensor = val
-                save_image(img_tensor, img_path)
+                _,img_array = val
+                img = Image.fromarray(img_array.astype(np.uint8))
+                img.save(img_path)
             else:
                 file_path = os.path.join(log_dir, f"{key}.txt")
                 with open(file_path, "w") as f:
