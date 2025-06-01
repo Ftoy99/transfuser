@@ -102,6 +102,7 @@ class ScenarioManager(object):
         """
 
         GameTime.restart()
+        print(f"Initializing agent with {agent}")
         self._agent = AgentWrapper(agent)
         self.scenario_class = scenario
         self.scenario = scenario.scenario
@@ -149,8 +150,9 @@ class ScenarioManager(object):
             CarlaDataProvider.on_carla_tick()
 
             try:
-                ego_action = self._agent()
 
+                ego_action = self._agent()
+                print(f"Debug ego action {ego_action}")
             # Special exception inside the agent that isn't caused by the agent
             except SensorReceivedNoData as e:
                 raise RuntimeError(e)

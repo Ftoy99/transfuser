@@ -332,6 +332,7 @@ class LeaderboardEvaluator(object):
 
             # Load scenario and run it
             if args.record:
+                print(f"Recorder at "+"{}/{}_rep{}.log".format(args.record, config.name, config.repetition_index))
                 self.client.start_recorder("{}/{}_rep{}.log".format(args.record, config.name, config.repetition_index))
             self.manager.load_scenario(scenario, self.agent_instance, config.repetition_index)
 
@@ -417,6 +418,7 @@ class LeaderboardEvaluator(object):
             config = route_indexer.next()
 
             # run
+            print(f"Running scenario with conf {config}")
             self._load_and_run_scenario(args, config)
 
             route_indexer.save_state(args.checkpoint)
