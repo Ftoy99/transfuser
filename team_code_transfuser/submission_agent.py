@@ -13,6 +13,8 @@ import numpy as np
 import math
 
 from leaderboard.autoagents import autonomous_agent
+from torchvision.utils import save_image
+
 from model import LidarCenterNet
 from config import GlobalConfig
 from data import lidar_to_histogram_features, draw_target_point, lidar_bev_cam_correspondences
@@ -242,16 +244,21 @@ class HybridAgent(autonomous_agent.AutonomousAgent):
         os.makedirs(log_dir, exist_ok=True)
 
         for key, val in input_data.items():
-            file_path = os.path.join(log_dir, f"{key}.txt")
-            with open(file_path, "w") as f:
-                if isinstance(val, tuple):
-                    for i, item in enumerate(val):
-                        if isinstance(item, torch.Tensor):
-                            f.write(f"{i}: tensor shape {item.shape}\n")
-                        else:
-                            f.write(f"{i}: {type(item)}: {item}\n")
-                else:
-                    f.write(str(val))
+            if key in {"rgb_front", "rgb_left", "rgb_right"}:
+                img_path = os.path.join(log_dir, f"{key}.png")
+                _,img_tensor = val
+                save_image(img_tensor, img_path)
+            else:
+                file_path = os.path.join(log_dir, f"{key}.txt")
+                with open(file_path, "w") as f:
+                    if isinstance(val, tuple):
+                        for i, item in enumerate(val):
+                            if isinstance(item, torch.Tensor):
+                                f.write(f"{i}: tensor shape {item.shape}\n")
+                            else:
+                                f.write(f"{i}: {type(item)}: {item}\n")
+                    else:
+                        f.write(str(val))
         self.step += 1
 
         if not self.initialized:
