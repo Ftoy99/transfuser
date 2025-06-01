@@ -274,7 +274,7 @@ class HybridAgent(autonomous_agent.AutonomousAgent):
         tick_data = self.tick(input_data)
         for key, val in tick_data.items():
             if key == "rgb":
-                for i, img_array in enumerate(rgb):
+                for i, img_array in enumerate(val):
                     img_path = os.path.join(log_dir, f"rgb_tick_data_{i}.png")
                     img = Image.fromarray(img_array.astype(np.uint8))
                     img.save(img_path)
