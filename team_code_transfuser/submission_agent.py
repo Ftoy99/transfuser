@@ -1,6 +1,7 @@
 import os
 import json
 from copy import deepcopy
+from datetime import datetime
 
 import cv2
 import carla
@@ -235,13 +236,22 @@ class HybridAgent(autonomous_agent.AutonomousAgent):
 
     @torch.inference_mode() # Faster version of torch_no_grad
     def run_step(self, input_data, timestamp):
-        os.makedirs("debug_logs", exist_ok=True)
-        for k, v in input_data.items():
-            if isinstance(v, torch.Tensor):
-                print(f"{k}: tensor shape {v.shape}")
-            else:
-                print(f"{k}: {type(v)}")
-        print(timestamp)
+        #Make folders to log input and output actions
+        log_time = datetime.now().strftime("%Y-%m-%d_%H-%M-%S-%f")[:-3]
+        log_dir = f"debug_logs/{log_time}_t{timestamp}_s{self.step}"
+        os.makedirs(log_dir, exist_ok=True)
+
+        for key, val in input_data.items():
+            file_path = os.path.join(log_dir, f"{key}.txt")
+            with open(file_path, "w") as f:
+                if isinstance(val, tuple):
+                    for i, item in enumerate(val):
+                        if isinstance(item, torch.Tensor):
+                            f.write(f"{i}: tensor shape {item.shape}\n")
+                        else:
+                            f.write(f"{i}: {type(item)}: {item}\n")
+                else:
+                    f.write(str(val))
         self.step += 1
 
         if not self.initialized:
