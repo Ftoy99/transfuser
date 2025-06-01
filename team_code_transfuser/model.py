@@ -720,15 +720,16 @@ class LidarCenterNet(nn.Module):
             rotated_bboxes.append(bbox)
 
         self.i += 1
-        if debug and self.i % 2 == 0 and not (save_path is None):
-            pred_bev = self.pred_bev(features[0])
-            pred_bev = F.interpolate(pred_bev, (self.config.bev_resolution_height, self.config.bev_resolution_width), mode='bilinear', align_corners=True)
-            pred_semantic = self.seg_decoder(image_features_grid)
-            pred_depth = self.depth_decoder(image_features_grid)
+        # if debug and self.i % 2 == 0 and not (save_path is None):
+        #TODO FIX THIS BACK
+        pred_bev = self.pred_bev(features[0])
+        pred_bev = F.interpolate(pred_bev, (self.config.bev_resolution_height, self.config.bev_resolution_width), mode='bilinear', align_corners=True)
+        pred_semantic = self.seg_decoder(image_features_grid)
+        pred_depth = self.depth_decoder(image_features_grid)
 
-            self.visualize_model_io(save_path, self.i, self.config, rgb, lidar_bev, target_point,
-                            pred_wp, pred_bev, pred_semantic, pred_depth, bboxes, self.device,
-                            gt_bboxes=None, expert_waypoints=expert_waypoints, stuck_detector=stuck_detector, forced_move=forced_move)
+        self.visualize_model_io(save_path, self.i, self.config, rgb, lidar_bev, target_point,
+                        pred_wp, pred_bev, pred_semantic, pred_depth, bboxes, self.device,
+                        gt_bboxes=None, expert_waypoints=expert_waypoints, stuck_detector=stuck_detector, forced_move=forced_move)
 
 
         return pred_wp, rotated_bboxes

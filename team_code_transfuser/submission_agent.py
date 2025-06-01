@@ -242,7 +242,7 @@ class HybridAgent(autonomous_agent.AutonomousAgent):
         log_time = datetime.now().strftime("%Y-%m-%d_%H-%M-%S-%f")[:-3]
         log_dir = f"debug_logs/{log_time}_t{timestamp}_s{self.step}"
         os.makedirs(log_dir, exist_ok=True)
-
+        SAVE_PATH = log_dir
         for key, val in input_data.items():
             if key in {"rgb_front", "rgb_left", "rgb_right"}:
                 img_path = os.path.join(log_dir, f"{key}.png")
@@ -321,7 +321,6 @@ class HybridAgent(autonomous_agent.AutonomousAgent):
             for i in range(self.model_count):
                 rotated_bb = []
                 if (self.backbone == 'transFuser'):
-                    print(f"debug backbone {transfuser}")
                     pred_wp, _ = self.nets[i].forward_ego(image, lidar_bev, target_point, target_point_image, velocity,
                                                           num_points=num_points, save_path=SAVE_PATH, stuck_detector=self.stuck_detector,
                                                           forced_move=is_stuck, debug=self.config.debug, rgb_back=self.rgb_back)
