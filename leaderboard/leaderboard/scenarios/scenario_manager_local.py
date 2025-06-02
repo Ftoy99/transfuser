@@ -150,9 +150,7 @@ class ScenarioManager(object):
             CarlaDataProvider.on_carla_tick()
 
             try:
-
                 ego_action = self._agent()
-                print(f"Debug ego action {ego_action}")
             # Special exception inside the agent that isn't caused by the agent
             except SensorReceivedNoData as e:
                 raise RuntimeError(e)
