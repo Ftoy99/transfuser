@@ -1,6 +1,8 @@
+import datetime
 from collections import deque
 import torch.nn.functional as F
 import cv2
+import time
 
 from utils import *
 from transfuser import TransfuserBackbone, SegDecoder, DepthDecoder
@@ -687,7 +689,7 @@ class LidarCenterNet(nn.Module):
     
     def forward_ego(self, rgb, lidar_bev, target_point, target_point_image, ego_vel, bev_points=None, cam_points=None, save_path=None, expert_waypoints=None,
                     stuck_detector=0, forced_move=False, num_points=None, rgb_back=None, debug=False):
-        
+        start_time = datetime.datetime.now()
         if(self.use_point_pillars == True):
             lidar_bev = self.point_pillar_net(lidar_bev, num_points)
             lidar_bev = torch.rot90(lidar_bev, -1, dims=(2, 3)) #For consitency this is also done in voxelization
@@ -696,6 +698,7 @@ class LidarCenterNet(nn.Module):
             lidar_bev = torch.cat((lidar_bev, target_point_image), dim=1)
 
         if (self.backbone == 'transFuser'):
+            print(f"rgb shape {rgb.shape} bev.shape {lidar_bev.shape}")
             features, image_features_grid, fused_features = self._model(rgb, lidar_bev, ego_vel)
         elif (self.backbone == 'late_fusion'):
             features, image_features_grid, fused_features = self._model(rgb, lidar_bev, ego_vel)
@@ -720,16 +723,18 @@ class LidarCenterNet(nn.Module):
             rotated_bboxes.append(bbox)
 
         self.i += 1
+        total = datetime.datetime.now() - start_time
+        print(f"model runtime is {total}")
         # if debug and self.i % 2 == 0 and not (save_path is None):
         #TODO FIX THIS BACK
-        pred_bev = self.pred_bev(features[0])
-        pred_bev = F.interpolate(pred_bev, (self.config.bev_resolution_height, self.config.bev_resolution_width), mode='bilinear', align_corners=True)
-        pred_semantic = self.seg_decoder(image_features_grid)
-        pred_depth = self.depth_decoder(image_features_grid)
-
-        self.visualize_model_io(save_path, self.i, self.config, rgb, lidar_bev, target_point,
-                        pred_wp, pred_bev, pred_semantic, pred_depth, bboxes, self.device,
-                        gt_bboxes=None, expert_waypoints=expert_waypoints, stuck_detector=stuck_detector, forced_move=forced_move)
+        # pred_bev = self.pred_bev(features[0])
+        # pred_bev = F.interpolate(pred_bev, (self.config.bev_resolution_height, self.config.bev_resolution_width), mode='bilinear', align_corners=True)
+        # pred_semantic = self.seg_decoder(image_features_grid)
+        # pred_depth = self.depth_decoder(image_features_grid)
+        #
+        # self.visualize_model_io(save_path, self.i, self.config, rgb, lidar_bev, target_point,
+        #                 pred_wp, pred_bev, pred_semantic, pred_depth, bboxes, self.device,
+        #                 gt_bboxes=None, expert_waypoints=expert_waypoints, stuck_detector=stuck_detector, forced_move=forced_move)
 
 
         return pred_wp, rotated_bboxes
