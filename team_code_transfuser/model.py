@@ -874,6 +874,7 @@ class LidarCenterNet(nn.Module):
         return bbox, brake
 
     def draw_bboxes(self, bboxes, image, color=(255, 255, 255), brake_color=(0, 0, 255)):
+        print(f"bbboxes {bboxes}")
         idx = [[0, 1], [1, 2], [2, 3], [3, 0], [4, 5]]
         for bbox, brake in bboxes:
             bbox = bbox.astype(np.int32)[:, :2]
