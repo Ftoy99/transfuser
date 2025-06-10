@@ -1,7 +1,7 @@
 import os
 import json
 from copy import deepcopy
-import datetime
+from datetime import datetime
 
 import cv2
 import carla
@@ -318,7 +318,7 @@ class HybridAgent(autonomous_agent.AutonomousAgent):
         with torch.no_grad():
             pred_wps = []
             bounding_boxes = []
-            start_time = datetime.datetime.now()
+            start_time = datetime.now()
             for i in range(self.model_count):
                 rotated_bb = []
                 if (self.backbone == 'transFuser'):
@@ -345,8 +345,7 @@ class HybridAgent(autonomous_agent.AutonomousAgent):
 
                 pred_wps.append(pred_wp)
                 bounding_boxes.append(rotated_bb)
-
-            print(f"enseble all 3 models time {datetime.datetime.now()-start_time}")
+            print(f"ensemble time {datetime.now()-start_time}")
         bbs_vehicle_coordinate_system = self.non_maximum_suppression(bounding_boxes, self.iou_treshold_nms)
 
         self.bb_buffer.append(bbs_vehicle_coordinate_system)
