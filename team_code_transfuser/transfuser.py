@@ -150,6 +150,7 @@ class TransfuserBackbone(nn.Module):
         image_embd_layer1 = self.avgpool_img(image_features)
         lidar_embd_layer1 = self.avgpool_lidar(lidar_features)
 
+        print(f"[Transformer 1] img {image_embd_layer1.shape} lidar {lidar_embd_layer1.shape}")
         image_features_layer1, lidar_features_layer1 = self.transformer1(image_embd_layer1, lidar_embd_layer1, velocity)
         image_features_layer1 = F.interpolate(image_features_layer1, size=(image_features.shape[2],image_features.shape[3]), mode='bilinear', align_corners=False)
         lidar_features_layer1 = F.interpolate(lidar_features_layer1, size=(lidar_features.shape[2],lidar_features.shape[3]), mode='bilinear', align_corners=False)
@@ -543,6 +544,7 @@ class Block(nn.Module):
         )
 
     def forward(self, x):
+        print(f"attention shape {x.shape}")
         x = x + self.attn(self.ln1(x))
         x = x + self.mlp(self.ln2(x))
 

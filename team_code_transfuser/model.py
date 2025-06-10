@@ -692,7 +692,7 @@ class LidarCenterNet(nn.Module):
         start_time = datetime.datetime.now()
         if(self.use_point_pillars == True):
             lidar_bev = self.point_pillar_net(lidar_bev, num_points)
-            lidar_bev = torch.rot90(lidar_bev, -1, dims=(2, 3)) #For consitency this is also done in voxelization
+            lidar_bev = torch.rot90(lidar_bev, -1, dims=(2, 3)) #For consistency this is also done in voxelization
 
         if self.use_target_point_image:
             lidar_bev = torch.cat((lidar_bev, target_point_image), dim=1)
