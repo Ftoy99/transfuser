@@ -1,4 +1,6 @@
 import math
+from datetime import datetime
+
 import torch
 from torch import nn
 import torch.nn.functional as F
@@ -342,7 +344,7 @@ class GPT(nn.Module):
         bz = lidar_tensor.shape[0]
         lidar_h, lidar_w = lidar_tensor.shape[2:4]
         img_h, img_w = image_tensor.shape[2:4]
-        
+        start_time = datetime.now()
         assert self.seq_len == 1
         image_tensor = image_tensor.view(bz, self.seq_len, -1, img_h, img_w).permute(0,1,3,4,2).contiguous().view(bz, -1, self.n_embd)
         lidar_tensor = lidar_tensor.view(bz, self.seq_len, -1, lidar_h, lidar_w).permute(0,1,3,4,2).contiguous().view(bz, -1, self.n_embd)
@@ -363,7 +365,7 @@ class GPT(nn.Module):
 
         image_tensor_out = x[:, :self.seq_len*self.img_vert_anchors*self.img_horz_anchors, :].contiguous().view(bz * self.seq_len, -1, img_h, img_w)
         lidar_tensor_out = x[:, self.seq_len*self.img_vert_anchors*self.img_horz_anchors:, :].contiguous().view(bz * self.seq_len, -1, lidar_h, lidar_w)
-
+        print(f"Transformer runtime {datetime.now()-start_time}")
         return image_tensor_out, lidar_tensor_out
 
         
